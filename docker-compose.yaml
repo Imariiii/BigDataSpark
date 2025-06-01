@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: BigDataSnowSpark_postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-big-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+      - ./исходные данные:/init_data
+  
+  spark:
+    image: jupyter/pyspark-notebook:latest
+    container_name: BigDataSnowSpark_spark
+    environment:
+      JUPYTER_TOKEN: mypassword
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - ./notebook:/home/jovyan/work
+      - ./jars:/opt/spark/jars
+  
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: BigDataSnowSpark_clickhouse
+    environment:
+      CLICKHOUSE_USER: myclickhouse
+      CLICKHOUSE_PASSWORD: mypassword
+      CLICKHOUSE_DB: myreports
+    ports:
+      - "9000:9000"
+      - "8123:8123"
+      
+volumes:
+  postgres-big-data:
